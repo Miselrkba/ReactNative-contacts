@@ -1,32 +1,46 @@
 import React from "react";
-import { Button, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Button,
+  FlatList,
+  ScrollView,
+  SectionList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+
+import Row from "./Row";
+
 import Constants from "expo-constants";
 
-import contacts from "./contacts";
+import contacts, { compareNames } from "./contacts";
+
+import ContactsList from "./ContactsList";
 
 export default class App extends React.Component {
   state = {
     showContacts: false,
+    contacts: contacts,
   };
 
   toggleContacts = () => {
     this.setState((prevState) => ({ showContacts: !prevState.showContacts }));
   };
 
+  sort = () => {
+    this.setState((prevState) => ({
+      contacts: [...prevState.contacts].sort(compareNames),
+    }));
+  };
+
   render() {
     return (
       <View style={styles.container}>
         <Button title="toggle contacts" onPress={this.toggleContacts} />
-        {this.state.showContacts ? (
-          <ScrollView>
-            {contacts.map((contact) => (
-              <View style={styles.row} key={contact.key}>
-                <Text>{contact.name}</Text>
-                <Text>{contact.phone}</Text>
-              </View>
-            ))}
-          </ScrollView>
-        ) : null}
+        <Button title="sort" onPress={this.sort} />
+        {this.state.showContacts && (
+          <ContactsList contacts={this.state.contacts} />
+        )}
       </View>
     );
   }
